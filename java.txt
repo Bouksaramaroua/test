@@ -1,0 +1,191 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        System.out.print("Veuillez entrer votre nom: ");
+        String nom = scanner.nextLine();
+        
+        System.out.print("Veuillez entrer votre âge: ");
+        int age = scanner.nextInt();
+        
+        System.out.println("Votre nom est " + nom + " et vous avez " + age + " ans.");
+    }
+}
+/////////////////////////////////////////////////////////////
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+
+    @Override
+    public void start(Stage primaryStage) throws Exception{
+        // Configuration des axes X et Y
+        NumberAxis xAxis = new NumberAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        // Création du graphique et configuration du titre
+        LineChart<Number,Number> lineChart = new LineChart<>(xAxis,yAxis);
+        lineChart.setTitle("Graphique de fonction");
+
+        // Définition de la série de données
+        XYChart.Series<Number,Number> dataSeries = new XYChart.Series<>();
+        dataSeries.setName("y = x^2");
+
+        // Ajout des données à la série
+        for (int i = -10; i <= 10; i++) {
+            double x = i;
+            double y = x * x;
+            dataSeries.getData().add(new XYChart.Data<>(x, y));
+        }
+
+        // Ajout de la série de données au graphique
+        lineChart.getData().add(dataSeries);
+
+        // Création de la scène et affichage du graphique
+        Scene scene  = new Scene(lineChart,800,600);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import java.util.*;
+
+public class Graph {
+    private Map<Integer, List<Integer>> adjVertices;
+
+    public Graph() {
+        adjVertices = new HashMap<Integer, List<Integer>>();
+    }
+
+    public void addVertex(int vertex) {
+        adjVertices.putIfAbsent(vertex, new ArrayList<Integer>());
+    }
+
+    public void addEdge(int src, int dest) {
+        adjVertices.get(src).add(dest);
+        adjVertices.get(dest).add(src);
+    }
+
+    public List<Integer> getAdjVertices(int vertex) {
+        return adjVertices.get(vertex);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Graph graph = new Graph();
+
+        System.out.print("Entrez le nombre de sommets : ");
+        int numVertices = scanner.nextInt();
+
+        for (int i = 1; i <= numVertices; i++) {
+            graph.addVertex(i);
+        }
+
+        System.out.print("Entrez le nombre d'arcs : ");
+        int numEdges = scanner.nextInt();
+
+        for (int i = 1; i <= numEdges; i++) {
+            System.out.print("Entrez l'arc " + i + " (src dest) : ");
+            int src = scanner.nextInt();
+            int dest = scanner.nextInt();
+            graph.addEdge(src, dest);
+        }
+
+        System.out.println("Le graphe : ");
+        for (int i = 1; i <= numVertices; i++) {
+            System.out.print(i + " -> ");
+            List<Integer> adjVertices = graph.getAdjVertices(i);
+            for (int j = 0; j < adjVertices.size(); j++) {
+                System.out.print(adjVertices.get(j) + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+import java.util.*;
+
+public class Graph {
+    private Map<Integer, List<Integer>> adjVertices;
+
+    public Graph() {
+        adjVertices = new HashMap<Integer, List<Integer>>();
+    }
+
+    public void addVertex(int vertex) {
+        adjVertices.putIfAbsent(vertex, new ArrayList<Integer>());
+    }
+
+    public void addEdge(int src, int dest) {
+        adjVertices.get(src).add(dest);
+    }
+
+    public boolean hasAbsorbingCycle() {
+        Set<Integer> visited = new HashSet<Integer>();
+        Set<Integer> cycle = new HashSet<Integer>();
+        Set<Integer> finished = new HashSet<Integer>();
+
+        for (int vertex : adjVertices.keySet()) {
+            if (!finished.contains(vertex)) {
+                if (dfs(vertex, visited, cycle, finished)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean dfs(int vertex, Set<Integer> visited, Set<Integer> cycle, Set<Integer> finished) {
+        visited.add(vertex);
+        cycle.add(vertex);
+
+        for (int neighbor : adjVertices.get(vertex)) {
+            if (cycle.contains(neighbor)) {
+                return true;
+            }
+            if (!visited.contains(neighbor)) {
+                if (dfs(neighbor, visited, cycle, finished)) {
+                    return true;
+                }
+            }
+        }
+
+        cycle.remove(vertex);
+        finished.add(vertex);
+        return false;
+    }
+
+    public static void main(String[] args) {
+        Graph graph = new Graph();
+
+        // Ajouter les sommets et les arcs du graphe
+        graph.addVertex(1);
+        graph.addVertex(2);
+        graph.addVertex(3);
+        graph.addEdge(1, 2);
+        graph.addEdge(2, 3);
+        graph.addEdge(3, 1);
+
+        // Vérifier s'il y a un circuit absorbant dans le graphe
+        boolean hasAbsorbingCycle = graph.hasAbsorbingCycle();
+
+        if (hasAbsorbingCycle) {
+            System.out.println("Le graphe contient un circuit absorbant.");
+        } else {
+            System.out.println("Le graphe ne contient pas de circuit absorbant.");
+        }
+    }
+}
+
